@@ -1,6 +1,5 @@
 package com.example.instant_inting.domain;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,28 +12,26 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Table(name = "users") // 테이블 명 명확히 지정
 public class User {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // AUTO_INCREMENT 적용
     private Long id;
 
-    // userID 로그인 시 필요.
     @Column(nullable = false, unique = true)
-    private String userId;
+    private String userId; // 유저 로그인 ID
 
-    // password 로그인 시 필요.
     @Column(nullable = false)
-    private String password;
+    private String password; // 비밀번호
 
-    // 가상 money 매칭 돌릴 때 필요.
+    @Column(nullable = false)
+    private String instarId; // 인스타 ID
+
+    @Column(nullable = false)
     @Builder.Default
-    private int coin = 0;
+    private int coin = 0; // 가상 머니 (기본값 0)
 
-    // 인스타 id
-    @Column(nullable = false)
-    private String instarId;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    // 매칭 내역 (일대다 관계)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     private List<Matching> matchings = new ArrayList<>();
 }
-
